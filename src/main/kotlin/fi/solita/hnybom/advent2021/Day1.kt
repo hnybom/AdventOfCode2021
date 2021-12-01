@@ -4,8 +4,10 @@ import java.io.File
 
 class Day1 {
 
-    private val input: List<Long> = File(
-        "/home/henriny/work/own/AdventOfCode2021/src/main/resources/input1.txt").readLines().map { it.toLong() }
+    private val input: List<Long> =
+        File("/home/henriny/work/own/AdventOfCode2021/src/main/resources/input1.txt")
+            .readLines()
+            .map { it.toLong() }
 
     fun part1(): Long {
         return input
