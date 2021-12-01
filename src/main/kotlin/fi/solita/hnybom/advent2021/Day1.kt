@@ -8,11 +8,16 @@ class Day1 {
         "/home/henriny/work/own/AdventOfCode2021/src/main/resources/input1.txt").readLines().map { it.toLong() }
 
     fun part1(): Long {
-        return input.zipWithNext().sumOf { (a, b) -> if (a < b) 1L else 0L }
+        return input
+            .zipWithNext()
+            .sumOf { (a, b) -> if (a < b) 1L else 0L }
     }
 
     fun part2(): Long {
-        return input.windowed(3, 1, false).zipWithNext().sumOf { (a, b) -> if (a.sum() < b.sum()) 1 else 0L }
+        return input
+            .windowed(3, 1, false)
+            .zipWithNext()
+            .sumOf { (a, b) -> if (a.sum() < b.sum()) 1 else 0L }
     }
 
     fun solve() {
