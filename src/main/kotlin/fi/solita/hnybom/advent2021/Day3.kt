@@ -1,5 +1,6 @@
 package fi.solita.hnybom.advent2021
 
+import fi.solita.hnybom.advent2021.utils.Helpers
 import java.io.File
 import kotlin.math.pow
 
@@ -14,21 +15,9 @@ class Day3 {
                     }
             }
 
-    private fun transpose(target: List<List<Long>>) : List<List<Long>> {
-        val result = mutableListOf<MutableList<Long>>()
-        target.forEach { list ->
-            list.forEachIndexed { index, value ->
-                if (result.size <= index) {
-                    result.add(mutableListOf())
-                }
-                result[index] = result.getOrElse(index) { mutableListOf() }.apply { add(value) }
-            }
-        }
-        return result
-    }
 
     private fun part1(): Long {
-        val transposed = transpose(input)
+        val transposed = Helpers.transpose(input)
         val gamma = transposed.map { list ->
             if(list.count { it == 1L } > list.count { it == 0L }) 1L else 0L
         }
@@ -79,7 +68,7 @@ class Day3 {
     }
 
     private fun calculateMostCommonByIndex(matrix: List<List<Long>>): List<Long> {
-        val transposed = transpose(matrix)
+        val transposed = Helpers.transpose(matrix)
         val mostCommonByIndex = transposed.map { list ->
             val ones = list.count { it == 1L }
             val zeros = list.count { it == 0L }
