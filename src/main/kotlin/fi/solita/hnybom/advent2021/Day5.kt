@@ -30,7 +30,7 @@ class Day5 {
                 }
                 val xs = move(x1, x2)
                 val ys = move(y1, y2)
-                return xs.zip(ys).map { Point(it.first, it.second) } + straightLines
+                return xs.zip(ys) + straightLines
             }
 
             return straightLines
