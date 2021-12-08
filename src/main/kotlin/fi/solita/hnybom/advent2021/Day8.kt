@@ -47,7 +47,7 @@ class Day8 {
             val fiveChars = connections.find { it.length == 5 && containsAll(it, sixAndNineForFive) }!!
             val twoChars = connections.find { it.length == 5 && it != threeChars && it != fiveChars }!!
 
-            val result = numbers.map {
+            val result = numbers.joinToString("") {
                 when {
                     containsAllWithSameLength(it, zeroChars) -> "0"
                     containsAllWithSameLength(it, oneChars) -> "1"
@@ -61,7 +61,7 @@ class Day8 {
                     containsAllWithSameLength(it, nineChars) -> "9"
                     else -> throw IllegalStateException("No match for $it")
                 }
-            }.joinToString("").toLong()
+            }.toLong()
             acc + result
         }
     }
