@@ -43,7 +43,7 @@ class Day8 {
             val nineChars = connections.find { it.length == 6 && containsAll(it, fourChars) }!!
             val zeroChars = connections.find { it.length == 6 && containsAll(it, oneChars) && it != nineChars }!!
             val sixChars = connections.find { it.length == 6 && it != zeroChars && it != nineChars }!!
-            val sixAndNineForFive = union(sixChars, nineChars)
+            val sixAndNineForFive = intersect(sixChars, nineChars)
             val fiveChars = connections.find { it.length == 5 && containsAll(it, sixAndNineForFive) }!!
             val twoChars = connections.find { it.length == 5 && it != threeChars && it != fiveChars }!!
 
@@ -81,7 +81,7 @@ class Day8 {
         return true
     }
 
-    private fun union(a: String, b: String): String {
+    private fun intersect(a: String, b: String): String {
         return a.toCharArray().intersect(b.toCharArray().toSet()).joinToString("")
     }
 
