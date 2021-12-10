@@ -28,7 +28,6 @@ class Day9 {
 
     fun part1(): Int {
         val lowPoints = getLowPoints()
-
         return lowPoints.sumOf { it.z + 1 }
     }
 
