@@ -10,10 +10,10 @@ class Day14 {
     private val tmpl: String = fileLines.first()
 
     private val instructions : Map<String, String> =
-        fileLines.drop(2).map {
+        fileLines.drop(2).associate {
             val split = it.split("->")
             split[0]!!.trim() to split[1].trim()
-        }.toMap()
+        }
 
     private fun step(template: String) : String {
         return template.windowed(2, 1, true).fold("") { acc, s ->
