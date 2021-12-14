@@ -63,8 +63,8 @@ class Day14 {
         (0..39).fold(Pair(pairs, charCounts)) { acc, _ ->
             step2(acc.first, acc.second)
         }
-        val max = charCounts.maxOfOrNull { it.value }!!
-        val min = charCounts.minOfOrNull { it.value }!!
+        val max = charCounts.maxOf { it.value }
+        val min = charCounts.minOf { it.value }
         return max - min
     }
 
