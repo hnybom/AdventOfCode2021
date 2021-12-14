@@ -25,9 +25,8 @@ class Day14 {
 
     fun part1(): Int {
 
-        val result = (0..9).fold(tmpl) { acc, i ->
-            val s = step(acc)
-            s
+        val result = (0..9).fold(tmpl) { acc, _ ->
+            step(acc)
         }
 
         val mapped = result.associate { it to result.count { c -> it == c } }
@@ -62,8 +61,7 @@ class Day14 {
         val charCounts = tmpl.associate { s -> s.toString() to tmpl.count { it == s }.toLong() }.toMutableMap()
 
         (0..39).fold(Pair(pairs, charCounts)) { acc, _ ->
-            val s = step2(acc.first, acc.second)
-            s
+            step2(acc.first, acc.second)
         }
         val max = charCounts.maxOfOrNull { it.value }!!
         val min = charCounts.minOfOrNull { it.value }!!
