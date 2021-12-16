@@ -23,7 +23,7 @@ class Day16 {
         }
 
     enum class PACKET_TYPE {
-        OPERATION_BITS, OPERATION_COUNTS, LITERAL, OVERFLOW
+        OPERATION_BITS, OPERATION_COUNTS, LITERAL
     }
 
     data class Packet(
@@ -31,8 +31,7 @@ class Day16 {
         val type: Int,
         val subPackets: List<List<Int>>,
         val childPackets : List<Packet>,
-        val packetType: PACKET_TYPE,
-        val overflowBits: Int = 0) {
+        val packetType: PACKET_TYPE) {
 
         fun bitLength() : Int {
             return getHeaderLength() + subPackets.sumOf { it.size } + childPackets.sumOf { it.bitLength() }
@@ -42,7 +41,6 @@ class Day16 {
             PACKET_TYPE.OPERATION_BITS -> 22
             PACKET_TYPE.OPERATION_COUNTS -> 18
             PACKET_TYPE.LITERAL -> 6
-            PACKET_TYPE.OVERFLOW -> 0
         }
 
         fun sumVersions() : Long {
@@ -124,17 +122,6 @@ class Day16 {
     ): Packet {
         val subPacketBits = binToInt(binsAfterLength.take(15))
         val childBins = binsAfterLength.drop(15).take(subPacketBits)
-
-        fun getChildPackets(childBins: List<Int>): List<Packet> {
-            val child = decode(childBins)
-            return if (child == null) {
-                emptyList()
-            } else {
-                val still = childBins.drop(child.bitLength())
-                listOf(child) + getChildPackets(still)
-            }
-        }
-
         val children = getChildPackets(childBins)
         return Packet(
             binToInt(versionBin),
@@ -143,6 +130,16 @@ class Day16 {
             children,
             PACKET_TYPE.OPERATION_BITS
         )
+    }
+
+    private fun getChildPackets(childBins: List<Int>): List<Packet> {
+        val child = decode(childBins)
+        return if (child == null) {
+            emptyList()
+        } else {
+            val still = childBins.drop(child.bitLength())
+            listOf(child) + getChildPackets(still)
+        }
     }
 
     fun part1(): Long {
