@@ -52,6 +52,37 @@ class Day16 {
         fun getLiterals() = binToLong(subPackets.map { it.drop(1) }.flatten())
     }
 
+    private fun decode(bin: List<Int>) : Packet? {
+        val versionBin = bin.take(3)
+        val typeBin = bin.drop(3).take(3)
+
+        return if(bin.all { it == 0 } || bin.isEmpty()) {
+            null
+        } else if(typeBin == listOf(1, 0, 0)) {
+            return handleLiteral(bin, versionBin, typeBin)
+        } else {
+            val lengthType = bin.drop(6).take(1).first()
+            val binsAfterLength = bin.drop(7)
+            if (lengthType == 0) {
+                handleBitLengthOperation(binsAfterLength, versionBin, typeBin)
+            } else {
+                handleCountBasedOperation(binsAfterLength, versionBin, typeBin)
+            }
+        }
+    }
+
+    private fun handleLiteral(
+        bin: List<Int>,
+        versionBin: List<Int>,
+        typeBin: List<Int>
+    ): Packet {
+        val subs = getLiteralSubPackets(bin.drop(6))
+        return Packet(
+            binToInt(versionBin),
+            binToInt(typeBin),
+            subs, emptyList(), PACKET_TYPE.LITERAL
+        )
+    }
 
     private fun getLiteralSubPackets(bin: List<Int>) : List<List<Int>> {
         val subPacketBin = bin.take(5)
@@ -62,64 +93,56 @@ class Day16 {
         }
     }
 
-    private fun decode(bin: List<Int>) : Packet? {
-        val versionBin = bin.take(3)
-        val typeBin = bin.drop(3).take(3)
+    private fun handleCountBasedOperation(
+        binsAfterLength: List<Int>,
+        versionBin: List<Int>,
+        typeBin: List<Int>
+    ): Packet {
+        val subPacketCount = binToInt(binsAfterLength.take(11))
 
-        return if(bin.all { it == 0 } || bin.isEmpty()) {
-            null
-        } else if(typeBin == listOf(1, 0, 0)) {
-            val subs = getLiteralSubPackets(bin.drop(6))
-            return Packet(
-                binToInt(versionBin),
-                binToInt(typeBin),
-                subs, emptyList(), PACKET_TYPE.LITERAL)
-        } else {
-            val lengthType = bin.drop(6).take(1).first()
-            val binsAfterLength = bin.drop(7)
-            if (lengthType == 0) {
-                val subPacketBits = binToInt(binsAfterLength.take(15))
-                val childBins = binsAfterLength.drop(15).take(subPacketBits)
+        val childPackets = (1..subPacketCount).fold(emptyList<Packet>()) { acc, _ ->
+            val toDrop = acc.sumOf { it.bitLength() } + 11
+            val subPacketBins = binsAfterLength.drop(toDrop)
+            val c = decode(subPacketBins)
+            if (c == null) acc
+            else acc + c
+        }
 
-                fun getChildPackets(childBins: List<Int>) : List<Packet> {
-                    val child = decode(childBins)
-                    return if(child == null) {
-                        //listOf(Packet(0, -1, emptyList(), emptyList(), PACKET_TYPE.OVERFLOW, childBins.size))
-                        emptyList()
-                    } else {
-                        val still = childBins.drop(child.bitLength())
-                        listOf(child) + getChildPackets(still)
-                    }
-                }
+        return Packet(
+            binToInt(versionBin),
+            binToInt(typeBin),
+            emptyList(),
+            childPackets,
+            PACKET_TYPE.OPERATION_COUNTS
+        )
+    }
 
-                val children = getChildPackets(childBins)
-                Packet(
-                    binToInt(versionBin),
-                    binToInt(typeBin),
-                    emptyList(),
-                    children,
-                    PACKET_TYPE.OPERATION_BITS
-                )
+    private fun handleBitLengthOperation(
+        binsAfterLength: List<Int>,
+        versionBin: List<Int>,
+        typeBin: List<Int>
+    ): Packet {
+        val subPacketBits = binToInt(binsAfterLength.take(15))
+        val childBins = binsAfterLength.drop(15).take(subPacketBits)
+
+        fun getChildPackets(childBins: List<Int>): List<Packet> {
+            val child = decode(childBins)
+            return if (child == null) {
+                emptyList()
             } else {
-                val subPacketCount = binToInt(binsAfterLength.take(11))
-
-                val childPackets = (1..subPacketCount).fold(emptyList<Packet>()) { acc, _ ->
-                    val toDrop = acc.sumOf { it.bitLength() } + 11
-                    val subPacketBins = binsAfterLength.drop(toDrop)
-                    val c = decode(subPacketBins)
-                    if (c == null) acc
-                    else acc + c
-                }
-
-                Packet(
-                    binToInt(versionBin),
-                    binToInt(typeBin),
-                    emptyList(),
-                    childPackets,
-                    PACKET_TYPE.OPERATION_COUNTS
-                )
+                val still = childBins.drop(child.bitLength())
+                listOf(child) + getChildPackets(still)
             }
         }
+
+        val children = getChildPackets(childBins)
+        return Packet(
+            binToInt(versionBin),
+            binToInt(typeBin),
+            emptyList(),
+            children,
+            PACKET_TYPE.OPERATION_BITS
+        )
     }
 
     fun part1(): Long {
@@ -147,7 +170,7 @@ class Day16 {
     }
 
     fun solve() {
-        //println("Part 1: ${part1()}")
+        println("Part 1: ${part1()}")
         println("Part 2: ${part2()}")
     }
 }
