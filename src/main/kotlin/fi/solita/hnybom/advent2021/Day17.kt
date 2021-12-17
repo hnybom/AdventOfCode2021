@@ -96,8 +96,8 @@ class Day17 {
 
     private fun stopFunction() = { m: Momentum ->
         m.isInTarget
-                || targetYmin > m.position.second
-                || (m.velocity.first <= 0 && m.position.first < targetXmin)
+        || targetYmin > m.position.second
+        || (m.velocity.first <= 0 && m.position.first < targetXmin)
     }
 
     fun solve() {
