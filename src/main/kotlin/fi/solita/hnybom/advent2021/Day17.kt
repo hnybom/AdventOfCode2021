@@ -65,11 +65,7 @@ class Day17 {
 
         (0..1000).forEach { x ->
             (-100..100).forEach { y ->
-                val trajectory = simulate(Momentum(Coordinate(0, 0), Coordinate(x, y))) { m ->
-                            m.isInTarget
-                            || targetYmin > m.position.second
-                            || (m.velocity.first <= 0 && m.position.first < targetXmin)
-                }
+                val trajectory = simulate(Momentum(Coordinate(0, 0), Coordinate(x, y)), stopFunction())
                 if(trajectory.find { it.isInTarget } != null) {
                     trajectory.maxOf { it.position.second }?.let {
                         if(maxY < it) {
@@ -80,7 +76,6 @@ class Day17 {
             }
         }
 
-
         return maxY
     }
 
@@ -89,11 +84,7 @@ class Day17 {
 
         (0..1000).forEach { x ->
             (-100..100).forEach { y ->
-                val trajectory = simulate(Momentum(Coordinate(0, 0), Coordinate(x, y))) { m ->
-                    m.isInTarget
-                            || targetYmin > m.position.second
-                            || (m.velocity.first <= 0 && m.position.first < targetXmin)
-                }
+                val trajectory = simulate(Momentum(Coordinate(0, 0), Coordinate(x, y)), stopFunction())
                 if(trajectory.find { it.isInTarget } != null) {
                     hits.add(Coordinate(x, y))
                 }
@@ -101,6 +92,12 @@ class Day17 {
         }
 
         return hits.size
+    }
+
+    private fun stopFunction() = { m: Momentum ->
+        m.isInTarget
+                || targetYmin > m.position.second
+                || (m.velocity.first <= 0 && m.position.first < targetXmin)
     }
 
     fun solve() {
