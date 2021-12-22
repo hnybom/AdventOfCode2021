@@ -84,7 +84,7 @@ class Day18 {
         else findRightLeaf(number.right!!)
     }
 
-    fun explode(number: NumberPair) {
+    private fun explode(number: NumberPair) {
         val left = number.left!!
         val nextLeft = findNextNumberLeft(number.parent, number)
         if(nextLeft != null) {
