@@ -84,16 +84,6 @@ class Day18 {
         else findRightLeaf(number.right!!)
     }
 
-    private fun calculateDepth(number: NumberPair): Int {
-        var depth = 0
-        var current = number
-        while(current.parent != null) {
-            current = current.parent!!
-            depth++
-        }
-        return depth
-    }
-
     fun explode(number: NumberPair) {
         val left = number.left!!
         val nextLeft = findNextNumberLeft(number.parent, number)
