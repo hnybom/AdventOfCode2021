@@ -160,7 +160,6 @@ class Day18 {
                 OP.SPLT -> split(firstProcessable.first)
             }
             step(number)
-
         }
         step(number)
     }
